@@ -14,8 +14,9 @@ GtkWidget *create(char* label) {
 }
 
 void attach(GtkWidget *button, GtkWidget *container) {
-  GtkWidget *button_box;
-  button_box = gtk_button_box_new(GTK_ORIENTATION_HORIZONTAL);
-  gtk_container_add(GTK_CONTAINER(container), button_box);
-  gtk_container_add(GTK_CONTAINER(button_box), button);
+  gtk_container_add(GTK_CONTAINER(container), button);
+}
+
+void setSize(GtkWidget *button, gint width, gint height) {
+  gtk_widget_set_size_request(button, width, height);
 }
