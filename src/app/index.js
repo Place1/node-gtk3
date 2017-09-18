@@ -1,6 +1,7 @@
 import ffi from 'ffi';
 import path from 'path';
 import ref from 'ref';
+import loop from './loop';
 import { Window } from '../';
 
 const type = {
@@ -23,22 +24,17 @@ export default class App {
     this.width = width || 200;
     this.height = height || 200;
     this.window = null;
-    app.register_on_activate(ffi.Callback('void', [type.GtkWidgetPtr], (window) => {
-      this.window = new Window({ pointer: window });
-      this.onActivate(this.window);
-    }));
     this.pointer = app.create(this.title, this.namespace, this.width, this.height);
   }
 
   init() {
+    loop.startLoop();
     return new Promise((resolve, reject) => {
-      this.onActivate = resolve;
-      app.init.async(this.pointer, (err, status) => {
-        if (status !== 0) {
-          console.error(new Error('Program initialized with error'));
-        }
-        process.exit(status);
-      });
+      app.register_on_activate(ffi.Callback('void', [type.GtkWidgetPtr], (windowPtr) => {
+        this.window = new Window({ pointer: windowPtr });
+        resolve(this.window);
+      }));
+      app.init(this.pointer);
     });
   }
 
