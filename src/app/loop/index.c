@@ -20,6 +20,11 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
+
+ /*
+  * @docs https://developer.gnome.org/glib/stable/glib-The-Main-Event-Loop.html#GSource
+  */
+
 #include <glib.h>
 #include <uv.h>
 #include <stdbool.h>
@@ -38,13 +43,15 @@ static gboolean uv_loop_source_prepare (GSource *base, int *timeout) {
     bool loop_alive = uv_loop_alive (source->loop);
 
     /* If the loop is dead, we can simply sleep forever until a GTK+ source
-     * (presumably) wakes us back up again. */
+     * (presumably) wakes us back up again.
+     */
     if (!loop_alive) {
         return FALSE;
     }
 
     /* Otherwise, check the timeout. If the timeout is 0, that means we're
-     * ready to go. Otherwise, keep sleeping until the timeout happens again. */
+     * ready to go. Otherwise, keep sleeping until the timeout happens again.
+     */
     int t = uv_backend_timeout (source->loop);
     *timeout = t;
 
